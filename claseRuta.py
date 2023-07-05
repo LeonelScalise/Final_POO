@@ -63,6 +63,25 @@ class Ruta:
                     router_actual.recepciones.append(paquete)
                     inicio = False
 
+        else:
+            router_actual = router.anterior
+            router_actual.retransmiciones_pendientes.append(paquete)
+            inicio = False
+            while inicio:
+                if router_actual != paquete.metadata["destino"]:
+                    router_a_enviar = getattr(router_actual, "anterior")
+                    
+                    #chequearia un if de si el router_a_enviar esta inhabilitado o averiado o reseteandose
+                    router_a_enviar.retransmiciones_pendientes.append(paquete)
+
+                    router_actual.retransmiciones_hechas.append(paquete)
+                    router_actual.retransmiciones_pendientes.remove(paquete)
+
+                    router_actual = router_a_enviar
+                
+                else:
+                    router_actual.recepciones.append(paquete)
+                    inicio = False
 
 
 
