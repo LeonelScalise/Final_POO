@@ -67,13 +67,7 @@ class Ruta:
         router_a_enviar = None # Router_a_enviar es el router que debe retransmitir el paquete (siguiente o anterior al router que tiene el paquete)
         coordenada_origen = int(router.nombre[-1])
         coordenada_destino = int(paquete.metadata["destino"].nombre[-1])
-        # contador0 = 0
-        # print(router.habilitado)
-        # while not router.habilitado:
-        #     if contador0 == 0:
-        #         print(f'esperando a que se habilite el {router.nombre}')
-        #     contador0 += 1
-        # router.latencia()
+
         try:
             if router.estado != "ACTIVO":
                 raise Exception(f"{router.nombre} no puede crear un paquete. Está inhabilitado.")
@@ -107,12 +101,6 @@ class Ruta:
                                     router_a_enviar = getattr(router_a_enviar, "siguiente")
                                     if router_a_enviar == paquete.metadata["destino"] and router_a_enviar.estado != 'ACTIVO':
                                         pass #mandar a la nube que chequea el estado del nodo destino constantemente hasta que se habilite
-                                
-                                # Esperar hasta que el router actual esté habilitado
-                                # while not router_actual.habilitado:
-                                #     time.sleep(0.01)  # Pequeña pausa para evitar consumo excesivo de CPU
-                        
-                                # router_actual.latencia_event.wait()
                                 
                                 router_a_enviar.retransmiciones_pendientes.agregar(paquete)
                                 
@@ -205,12 +193,6 @@ class Ruta:
                                         
                                         pass #mandar a la nube que chequea el estado del nodo destino constantemente hasta que se habilite
                                 
-
-                                # Esperar hasta que el router actual esté habilitado
-                                # while not router_actual.habilitado:
-                                #     time.sleep(0.01)  # Pequeña pausa para evitar consumo excesivo de CPU
-
-                                # router_actual.latencia_event.wait()
                                 router_a_enviar.retransmiciones_pendientes.agregar(paquete)
                                 
                                 contador = 0
@@ -284,10 +266,6 @@ class Ruta:
         except Exception as e:
              print(e)
     
-    # def iniciarLatenciaRouters(self):
-    #     for router in self.routers:
-    #         threading.Thread(target=router.iniciarLatencia, daemon=True).start()
-            
         
 
     def averiaAleatoria(self):
