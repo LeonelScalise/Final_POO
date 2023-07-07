@@ -20,6 +20,8 @@ class RoutingSim():
     def inhabilitarRouter(self, router):
         router.estado = "INACTIVO"
 
+    def habilitarRouter(self, router):
+        router.estado = "ACTIVO"
 
     def terminarSimulacion(self):
         print("Simulación finalizada")
@@ -40,7 +42,7 @@ class RoutingSim():
         ruta.agregarRouter(router2)
         ruta.agregarRouter(router3)
         ruta.agregarRouter(router4)
-        ruta.iniciarLatenciaRouters()
+        # ruta.iniciarLatenciaRouters()
 
         #self.inhabilitarRouter(router1)
         #self.inhabilitarRouter(router3)
@@ -49,14 +51,22 @@ class RoutingSim():
         
 
 
-        p1 = router0.crearPaquete("Hola", router4)
-        p2 = router0.crearPaquete("tas?", router4)
+        p1 = router0.crearPaquete("Hola", router1)
+        p2 = router1.crearPaquete("tas?", router4)
+        p3 = router3.crearPaquete("CAPO", router2)
 
 
         #threading.Timer(5, lambda : ruta.averiaAleatoria()).start()
-        
-        threading.Timer(5, lambda : ruta.viajePaquete(p1, router0)).start()
-        threading.Timer(6, lambda : ruta.viajePaquete(p2, router0)).start()
+        threading.Timer(1, lambda : self.inhabilitarRouter(router2)).start()
+        threading.Timer(5, lambda : ruta.viajePaquete(p3, router3)).start()
+        threading.Timer(6, lambda : ruta.viajePaquete(p2, router1)).start()
+        # threading.Timer(7, lambda : ruta.viajePaquete(p3, router3)).start()
+        # threading.Timer(13, lambda : ruta.viajePaquete(p3, router0)).start()
+        threading.Timer(15, lambda : self.habilitarRouter(router2)).start()
+
+
+        # threading.Timer(5, lambda : ruta.viajePaquete(p2, router4)).start()
+        # threading.Timer(7, lambda : ruta.viajePaquete(p3, router1)).start()
         #threading.Timer(20, lambda : ruta.averiaAleatoria()).start()
 
         
@@ -77,7 +87,7 @@ class RoutingSim():
 
 
 # Crea una instancia de Simulacion con una duración de 30 segundos
-simulacion = RoutingSim(30)
+simulacion = RoutingSim(35)
 
 # Ejecuta la simulación
 simulacion.iniciarSimulacion()

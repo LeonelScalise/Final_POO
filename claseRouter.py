@@ -16,7 +16,7 @@ class Router():
         self.anterior = None
         self.paquetes_enviados = [] # Considerar que paquetes_enviados sea un contador y no una lista
         self.habilitado = True
-        self.latencia_event = threading.Event()
+        # self.latencia_event = threading.Event()
         
     def crearPaquete(self, mensaje:str, destino):
 
@@ -35,18 +35,18 @@ class Router():
     def __str__(self) -> str:
         return self.nombre
     
-    def iniciarLatencia(self):
-        while True:
-            self.latencia_event.set()  # Desbloquea el envío y la recepción de paquetes
-            self.habilitado = True  # El router está habilitado
-            time.sleep(5)  # Tiempo de latencia de 100 ms
-            self.habilitado = False  # El router está deshabilitado durante el tiempo de latencia
-            self.latencia_event.clear()  # Bloquea el envío y la recepción de paquetes
+    # def iniciarLatencia(self):
+    #     while True:
+    #         self.latencia_event.set()  # Desbloquea el envío y la recepción de paquetes
+    #         self.habilitado = True  # El router está habilitado
+    #         time.sleep(5)  # Tiempo de latencia de 100 ms
+    #         self.habilitado = False  # El router está deshabilitado durante el tiempo de latencia
+    #         self.latencia_event.clear()  # Bloquea el envío y la recepción de paquetes
 
-    # def latencia(self):
-    #     self.habilitado = False
-    #     time.sleep(1)
-    #     self.habilitado = True
+    def latencia(self):
+        self.habilitado = False
+        time.sleep(5)
+        self.habilitado = True
 
     def ordenarPaquetes(self):
         pass
