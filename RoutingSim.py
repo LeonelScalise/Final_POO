@@ -1,6 +1,7 @@
 from claseRouter import Router
 from claseRuta import Ruta
 from clasePaquete import Paquete
+import datetime
 import sys
 import threading
 
@@ -8,27 +9,38 @@ class RoutingSim():
     def __init__(self, duracion):
         self.duracion = duracion
         self.timer = None
+        estados_routers=[]
     
     def crearRouter(self, coordenada):
         nombre = "router_" + str(coordenada)
-        estado = "AGREGADO"
-        newRouter = Router(nombre, estado)
+        newRouter = Router(nombre)
+        newRouter.registrarEvento()
         newRouter.estado = "ACTIVO"
+        newRouter.registrarEvento()
 
         return newRouter
     
     def inhabilitarRouter(self, router):
         router.estado = "INACTIVO"
+        router.registrarEvento()
+
 
     def habilitarRouter(self, router):
         router.estado = "ACTIVO"
+        router.registrarEvento()
 
-    def terminarSimulacion(self):
+    def terminarSimulacion(self,ruta):
+        ruta.crearArchivos()
         print("Simulación finalizada")
         # Salir del programa
         sys.exit()
+    
+    def limpiarCSV(self):
+        with open('Final_POO/system_log.csv', mode='w', newline=''):
+            pass
 
-    def iniciarSimulacion(self):
+    def iniciarSimulacion(self): 
+        self.limpiarCSV()
         router0 = self.crearRouter(0)
         router1 = self.crearRouter(1)
         router2 = self.crearRouter(2)
@@ -51,29 +63,30 @@ class RoutingSim():
         
 
 
-        p1 = router0.crearPaquete("Hola", router1)
+        p1 = router1.crearPaquete("Hola", router4)
         p2 = router1.crearPaquete("tas?", router4)
-        p3 = router3.crearPaquete("CAPO", router2)
+        p3 = router1.crearPaquete("CAPO", router4)
 
 
         #threading.Timer(5, lambda : ruta.averiaAleatoria()).start()
         threading.Timer(1, lambda : self.inhabilitarRouter(router2)).start()
-        threading.Timer(5, lambda : ruta.viajePaquete(p3, router3)).start()
+        threading.Timer(5, lambda : ruta.viajePaquete(p3, router1)).start()
         threading.Timer(6, lambda : ruta.viajePaquete(p2, router1)).start()
-        # threading.Timer(7, lambda : ruta.viajePaquete(p3, router3)).start()
+        # threading.Timer(7, lambda : ruta.viajePaquete(p1, router1)).start()
         # threading.Timer(13, lambda : ruta.viajePaquete(p3, router0)).start()
         threading.Timer(15, lambda : self.habilitarRouter(router2)).start()
 
 
         # threading.Timer(5, lambda : ruta.viajePaquete(p2, router4)).start()
         # threading.Timer(7, lambda : ruta.viajePaquete(p3, router1)).start()
-        #threading.Timer(20, lambda : ruta.averiaAleatoria()).start()
+        threading.Timer(3, lambda : ruta.averiaAleatoria()).start()
 
         
         
         #threading.Timer(10, lambda : self.inhabilitarRouter(router2)).start() # A los 20 segundos de arrancar la simulación se deshabilita el router0
-
-        self.timer = threading.Timer(self.duracion, self.terminarSimulacion) # Ejecuta la función "terminarSimulación" durante los segundos que "duracion" indique 
+        for router in ruta.routers:
+            threading.Timer(self.duracion-0.1,lambda: router.ordenarPaquetes()).start()
+        self.timer = threading.Timer(self.duracion, lambda: self.terminarSimulacion(ruta)) # Ejecuta la función "terminarSimulación" durante los segundos que "duracion" indique 
         self.timer.start()
     
         
@@ -87,7 +100,7 @@ class RoutingSim():
 
 
 # Crea una instancia de Simulacion con una duración de 30 segundos
-simulacion = RoutingSim(35)
+simulacion = RoutingSim(20)
 
 # Ejecuta la simulación
 simulacion.iniciarSimulacion()
