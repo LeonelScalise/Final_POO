@@ -296,6 +296,7 @@ class Ruta:
         print(router.nombre)
         print(router.estado)
         router.estado = "EN_RESET"
+        router.registrarEvento()
         print(router.nombre)
         print(router.estado)
         tiempo_aleatorio = random.randint(5, 10)
@@ -305,6 +306,7 @@ class Ruta:
         time.sleep(tiempo_aleatorio)
 
         router.estado = "ACTIVO"
+        router.registrarEvento()
         print(router.nombre)
         print(router.estado)
 
@@ -314,6 +316,28 @@ class Ruta:
             nube.paquetes_pendientes[router.nombre] = []
         
        nube.paquetes_pendientes[router.nombre].append(paquete)
+    
 
-        
+    def crearArchivos(self):
+        origen_anterior = ''
+        c=0
+        for router in self.routers:
+            if len(router.recepciones)!= 0:
+                nombre_archivo = f"Final_POO/{router.nombre}.txt"  # Nombre del archivo basado en el router que recibió los paquetes
+                with open(nombre_archivo, "w") as archivo:
+                    for paquete in router.recepciones:
+                        origen = paquete.metadata['origen'].nombre
+                        mensaje = paquete.mensaje
+                        if origen == origen_anterior:
+                            archivo.write(f"{mensaje}\n")
+                        else:
+                            if c==0:
+                                archivo.write(f"Origen: {origen}\n")
+                                c+=1
+                            else:
+                                archivo.write(f"\nOrigen: {origen}\n")
 
+                            archivo.write(f"{mensaje}\n")
+                            origen_anterior = origen
+                            
+                    
