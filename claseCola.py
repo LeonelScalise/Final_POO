@@ -44,4 +44,5 @@ if __name__ == '__main__':
     c.agregar(p1)
     c.agregar(p2)
     c.borrar()
-    c.verCola()
+    c.borrar()
+    print(c.esVacia())

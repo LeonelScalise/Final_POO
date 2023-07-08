@@ -31,6 +31,8 @@ class RoutingSim():
 
     def terminarSimulacion(self,ruta):
         ruta.crearArchivos()
+        ruta.tasas()
+        
         print("Simulación finalizada")
         # Salir del programa
         sys.exit()
@@ -67,28 +69,32 @@ class RoutingSim():
         p2 = router1.crearPaquete("tas?", router4)
         p3 = router1.crearPaquete("CAPO", router4)
 
-
+        
         #threading.Timer(5, lambda : ruta.averiaAleatoria()).start()
-        threading.Timer(1, lambda : self.inhabilitarRouter(router2)).start()
+        # threading.Timer(1, lambda : self.inhabilitarRouter(router2)).start()
         threading.Timer(5, lambda : ruta.viajePaquete(p3, router1)).start()
         threading.Timer(6, lambda : ruta.viajePaquete(p2, router1)).start()
         # threading.Timer(7, lambda : ruta.viajePaquete(p1, router1)).start()
         # threading.Timer(13, lambda : ruta.viajePaquete(p3, router0)).start()
-        threading.Timer(15, lambda : self.habilitarRouter(router2)).start()
+        # threading.Timer(15, lambda : self.habilitarRouter(router2)).start()
 
 
         # threading.Timer(5, lambda : ruta.viajePaquete(p2, router4)).start()
         # threading.Timer(7, lambda : ruta.viajePaquete(p3, router1)).start()
-        threading.Timer(3, lambda : ruta.averiaAleatoria()).start()
+        # threading.Timer(3, lambda : ruta.averiaAleatoria()).start()
 
         
         
         #threading.Timer(10, lambda : self.inhabilitarRouter(router2)).start() # A los 20 segundos de arrancar la simulación se deshabilita el router0
         for router in ruta.routers:
-            threading.Timer(self.duracion-0.1,lambda: router.ordenarPaquetes()).start()
-        self.timer = threading.Timer(self.duracion, lambda: self.terminarSimulacion(ruta)) # Ejecuta la función "terminarSimulación" durante los segundos que "duracion" indique 
+            threading.Timer(self.duracion - 0.1,lambda: router.ordenarPaquetes()).start()
+
+        threading.Timer(self.duracion - 0.01, ruta.graficoBarras()).start()
+        
+
+        self.timer = threading.Timer(self.duracion, lambda: self.terminarSimulacion(ruta)) # Cuando pasan "duración" segundos se ejecuta terminarSimulacion 
         self.timer.start()
-    
+        
         
 
         # Realizar acá las operaciones de simulación (creacion de routers, creacion de paquetes, transmision de paquetes (armado de Ruta), etc.)
@@ -100,7 +106,7 @@ class RoutingSim():
 
 
 # Crea una instancia de Simulacion con una duración de 30 segundos
-simulacion = RoutingSim(20)
+simulacion = RoutingSim(35)
 
 # Ejecuta la simulación
 simulacion.iniciarSimulacion()

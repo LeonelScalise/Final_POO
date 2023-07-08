@@ -51,8 +51,11 @@ class Router():
 
 
     def averia(self):
-        self.estado == "EN_RESET"
-        self.registrarEvento()
+        if self.estado == 'ACTIVO':
+            self.estado == "EN_RESET"
+            self.registrarEvento()
+        else:
+            print('No se puede averiar un router INACTIVO o que ya este EN_RESET')
 
 # Este metodo permite ordenar los paquetes que se encuentran en la lista recepciones ya que primero
 # ordena por coordenada router de manera ascendente y luego procede a ordenar por id del paquete.
