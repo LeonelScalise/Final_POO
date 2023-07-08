@@ -43,19 +43,19 @@ class RoutingSim():
 
     def iniciarSimulacion(self): 
         self.limpiarCSV()
-        router0 = self.crearRouter(0)
         router1 = self.crearRouter(1)
         router2 = self.crearRouter(2)
         router3 = self.crearRouter(3)
         router4 = self.crearRouter(4)
+        router5 = self.crearRouter(5)
 
         ruta = Ruta()
         
-        ruta.agregarRouter(router0)
         ruta.agregarRouter(router1)
         ruta.agregarRouter(router2)
         ruta.agregarRouter(router3)
         ruta.agregarRouter(router4)
+        ruta.agregarRouter(router5)
         # ruta.iniciarLatenciaRouters()
 
         #self.inhabilitarRouter(router1)
@@ -66,14 +66,14 @@ class RoutingSim():
 
 
         p1 = router1.crearPaquete("Hola", router4)
-        p2 = router1.crearPaquete("tas?", router4)
-        p3 = router1.crearPaquete("CAPO", router4)
+        p2 = router1.crearPaquete("tas?", router5)
+        p3 = router5.crearPaquete("CAPO", router1)
 
         
         #threading.Timer(5, lambda : ruta.averiaAleatoria()).start()
         # threading.Timer(1, lambda : self.inhabilitarRouter(router2)).start()
-        threading.Timer(5, lambda : ruta.viajePaquete(p3, router1)).start()
-        threading.Timer(6, lambda : ruta.viajePaquete(p2, router1)).start()
+        threading.Timer(5, lambda : ruta.viajePaquete(p3, router5)).start()
+        threading.Timer(5, lambda : ruta.viajePaquete(p2, router1)).start()
         # threading.Timer(7, lambda : ruta.viajePaquete(p1, router1)).start()
         # threading.Timer(13, lambda : ruta.viajePaquete(p3, router0)).start()
         # threading.Timer(15, lambda : self.habilitarRouter(router2)).start()
