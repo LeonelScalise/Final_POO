@@ -9,7 +9,7 @@ class RoutingSim():
     def __init__(self, duracion):
         self.duracion = duracion
         self.timer = None
-        estados_routers=[]
+        self.sim_terminada = False
     
     def crearRouter(self, coordenada):
         nombre = "router_" + str(coordenada)
@@ -29,16 +29,20 @@ class RoutingSim():
         router.estado = "ACTIVO"
         router.registrarEvento()
 
-    def terminarSimulacion(self,ruta):
-        ruta.crearArchivos()
-        ruta.tasas()
+    def terminarSimulacion(self, ruta):
+        for router in ruta.routers:
+            router.ordenarPaquetes()
         
-        print("Simulación finalizada")
-        # Salir del programa
-        sys.exit()
+        ruta.tasas()
+        ruta.crearArchivos()
+
+        self.sim_terminada = True
+
+        print("\nSimulación finalizada")
+   
     
     def limpiarCSV(self):
-        with open('Final_POO/system_log.csv', mode='w', newline=''):
+        with open('system_log.csv', mode='w', newline=''):
             pass
 
     def iniciarSimulacion(self): 
@@ -65,18 +69,24 @@ class RoutingSim():
         
 
 
-        p1 = router1.crearPaquete("Hola", router4)
-        p2 = router1.crearPaquete("tas?", router5)
-        p3 = router5.crearPaquete("CAPO", router1)
+        p1 = router1.crearPaquete("Sali del 1.0", router5)
+        p2 = router3.crearPaquete("Sali del 3", router5)
+        p3 = router1.crearPaquete("Sali del 1.1", router5)
+        p4 = router4.crearPaquete("Sali del 4", router5)
 
         
         #threading.Timer(5, lambda : ruta.averiaAleatoria()).start()
-        # threading.Timer(1, lambda : self.inhabilitarRouter(router2)).start()
-        threading.Timer(5, lambda : ruta.viajePaquete(p3, router5)).start()
-        threading.Timer(5, lambda : ruta.viajePaquete(p2, router1)).start()
-        # threading.Timer(7, lambda : ruta.viajePaquete(p1, router1)).start()
+
+        # threading.Timer(1, lambda : self.inhabilitarRouter(router3)).start()
+        threading.Timer(3, lambda : ruta.viajePaquete(p4, router4)).start()
+        threading.Timer(5, lambda : ruta.viajePaquete(p3, router1)).start()
+        threading.Timer(7, lambda : ruta.viajePaquete(p2, router3)).start()
+        threading.Timer(10, lambda : ruta.viajePaquete(p1, router1)).start()
+        
+        # threading.Timer(7, lambda : ruta.viajePaquete(p1, router2)).start()
         # threading.Timer(13, lambda : ruta.viajePaquete(p3, router0)).start()
-        # threading.Timer(15, lambda : self.habilitarRouter(router2)).start()
+
+        #threading.Timer(15, lambda : self.habilitarRouter(router3)).start()
 
 
         # threading.Timer(5, lambda : ruta.viajePaquete(p2, router4)).start()
@@ -86,10 +96,9 @@ class RoutingSim():
         
         
         #threading.Timer(10, lambda : self.inhabilitarRouter(router2)).start() # A los 20 segundos de arrancar la simulación se deshabilita el router0
-        for router in ruta.routers:
-            threading.Timer(self.duracion - 0.1,lambda: router.ordenarPaquetes()).start()
 
-        threading.Timer(self.duracion - 0.01, ruta.graficoBarras()).start()
+
+        # threading.Timer(self.duracion - 0.01, ).start()
         
 
         self.timer = threading.Timer(self.duracion, lambda: self.terminarSimulacion(ruta)) # Cuando pasan "duración" segundos se ejecuta terminarSimulacion 
@@ -103,10 +112,15 @@ class RoutingSim():
 
         
         # Esperar hasta que la simulación esté completa
+        while not self.sim_terminada:
+            pass
+
+        ruta.graficoBarras() # Esta función se ejecuta aca porque hay problemas con matplotlib y los Threads
+        sys.exit()
 
 
 # Crea una instancia de Simulacion con una duración de 30 segundos
-simulacion = RoutingSim(35)
+simulacion = RoutingSim(15)
 
 # Ejecuta la simulación
 simulacion.iniciarSimulacion()
@@ -141,9 +155,9 @@ simulacion.iniciarSimulacion()
     # rutita.crearPaqueteAleatorio(r3)
     
 
-    # print(r2.retransmiciones_pendientes.verCola)
-    # print(r3.retransmiciones_pendientes.verCola)
-    # print(r4.retransmiciones_pendientes.verCola)
+    # print(r2.retransmisiones_pendientes.verCola)
+    # print(r3.retransmisiones_pendientes.verCola)
+    # print(r4.retransmisiones_pendientes.verCola)
     # print(r4.recepciones[-1].metadata)
     # print(r2.recepciones[-1].metadata)
 

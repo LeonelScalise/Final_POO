@@ -1,3 +1,9 @@
-
 Origen: router_1
-tas?
+Sali del 1.0
+Sali del 1.1
+
+Origen: router_3
+Sali del 3
+
+Origen: router_4
+Sali del 4

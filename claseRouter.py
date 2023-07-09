@@ -10,14 +10,13 @@ class Router():
     def __init__(self, nombre):
         self.nombre = nombre
         self.estado = 'AGREGADO'
-        self.retransmiciones_pendientes = Cola() # Retrasmiciones pendientes debe ser una cola
-        self.retransmiciones = [] # Considerar que restransmiciones sea un contador y no una lista
+        self.retransmisiones_pendientes = Cola()
+        self.retransmisiones = [] # Considerar que restransmiciones sea un contador y no una lista
         self.recepciones = []
         self.siguiente = None
         self.anterior = None
         self.paquetes_enviados = [] # Considerar que paquetes_enviados sea un contador y no una lista
         self.habilitado = True
-        # self.latencia_event = threading.Event()
         
     def crearPaquete(self, mensaje:str, destino):
 
@@ -36,17 +35,10 @@ class Router():
     def __str__(self) -> str:
         return self.nombre
     
-    # def iniciarLatencia(self):
-    #     while True:
-    #         self.latencia_event.set()  # Desbloquea el envío y la recepción de paquetes
-    #         self.habilitado = True  # El router está habilitado
-    #         time.sleep(5)  # Tiempo de latencia de 100 ms
-    #         self.habilitado = False  # El router está deshabilitado durante el tiempo de latencia
-    #         self.latencia_event.clear()  # Bloquea el envío y la recepción de paquetes
 
     def latencia(self):
         self.habilitado = False
-        time.sleep(5)
+        time.sleep(0.1)
         self.habilitado = True
 
 
@@ -67,7 +59,7 @@ class Router():
     def registrarEvento(self):
         fecha_hora= datetime.now().strftime("%d-%m-%y %H:%M:%S")
 
-        with open('Final_POO/system_log.csv', mode='a', newline='') as file:
+        with open('system_log.csv', mode='a', newline='') as file:
             writer = csv.writer(file)
             writer.writerow([self.nombre.upper(), fecha_hora, self.estado])
 
