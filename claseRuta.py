@@ -27,83 +27,93 @@ class Ruta:
             self.ultimo.siguiente = router
             self.ultimo = router
             self.routers.append(router)
-
-    # Creacion de paquetes desde un router a otro difente al azar dentro de la ruta --> Tendriamos que fijarnos si va en Router
-    def crearPaqueteAleatorio(self, router):
-        ahora = datetime.now()
-        router_destino = None
-        inicio = True
-        try:
-            if router.estado != "ACTIVO":
-                raise Exception(f"{router.nombre} no puede crear un paquete. Está inhabilitado.")
-            else:
-                while inicio:
-                    pos_router = random.randint(0, len(self.routers)-1)
-                    router_destino = self.routers[pos_router]
-                    if router_destino != router:
-                        inicio = False
-                    else:
-                        continue
-                    
-                # Donde dice "hola", en realidad deberia haber un mensaje que podría ser al azar
-                
-                if len(router.paquetes_enviados) == 0:
-                    paquete = Paquete("Hola", {"id": 1, "fecha": ahora, "origen": router, "destino": router_destino})
-                    router.paquetes_enviados.append(paquete)
-                    
-                else:
-                    id_paquete = router.paquetes_enviados[-1].metadata["id"] + 1
-                    paquete = Paquete("Hola", {"id": id_paquete, "fecha": ahora, "origen": router, "destino": router_destino} )
-                    router.paquetes_enviados.append(paquete)
-                
-                print(router_destino.nombre)
-                self.viajePaquete(paquete, router)
-
-        except Exception as e:
-             print(e)
-            
+    
+    def enviarPaquete(self, paquete):
+        flag = True
+        origen = paquete.metadata['origen']
+        while not origen.retransmisiones_pendientes.esVacia():
+            if flag:
+                print(f'No puede enviar un paquete, el {origen.nombre} tiene retransmisiones pendientes.')
+                flag = False
         
+        self.viajePaquete(paquete)
+            
+    # def crearPaqueteAleatorio(self, router):
+    #     ahora = datetime.now()
+    #     router_destino = None
+    #     inicio = True
+    #     try:
+    #         if router.estado != "ACTIVO":
+    #             raise Exception(f"{router.nombre} no puede crear un paquete. Está inhabilitado.")
+    #         else:
+    #             while inicio:
+    #                 pos_router = random.randint(0, len(self.routers)-1)
+    #                 router_destino = self.routers[pos_router]
+    #                 if router_destino != router:
+    #                     inicio = False
+    #                 else:
+    #                     continue
+                    
+    #             # Donde dice "hola", en realidad deberia haber un mensaje que podría ser al azar
+                
+    #             if len(router.paquetes_enviados) == 0:
+    #                 router.crearPaquete()
+    #                 paquete = Paquete("Hola", {"id": 1, "fecha": ahora, "origen": router, "destino": router_destino})
+    #                 router.paquetes_enviados.append(paquete)
+                    
+    #             else:
+    #                 id_paquete = router.paquetes_enviados[-1].metadata["id"] + 1
+    #                 paquete = Paquete("Hola", {"id": id_paquete, "fecha": ahora, "origen": router, "destino": router_destino} )
+    #                 router.paquetes_enviados.append(paquete)
+
+    #     except Exception as e:
+    #          print(e)
+
+             
     # Funcion agregar paquete a la red
 
-    def viajePaquete(self, paquete:Paquete, router:Router):
+    def viajePaquete(self, paquete:Paquete):
         time_ref = time.time()
+        origen = paquete.metadata['origen']
         router_actual = None # Router_actual es el router que contiene actualmente el paquete
         router_a_enviar = None # Router_a_enviar es el router que debe retransmitir el paquete (siguiente o anterior al router que tiene el paquete)
-        coordenada_origen = int(router.nombre[-1])
+        coordenada_origen = int(origen.nombre[-1])
         coordenada_destino = int(paquete.metadata["destino"].nombre[-1])
 
         try:
-            if router.estado != "ACTIVO":
-                raise Exception(f"{router.nombre} no puede crear un paquete. Está inhabilitado.")
+            if origen.estado != "ACTIVO":
+                raise Exception(f"{origen.nombre} no puede crear un paquete. Está inhabilitado.")
             elif coordenada_destino == coordenada_origen:
                 raise Exception("Un router no puede enviarse un paquete a sí mismo.")
-            
-            #router.paquetes_enviados.append(paquete)
                 
             inicio = True
             flag = True
-            while not router.habilitado:
+            while not origen.habilitado:
                 if flag:
-                    print(f'Esperando a que se habilite el {router.nombre} de origen.')
+                    print(f'Esperando a que se habilite el {origen.nombre} de origen.')
                 flag = False
 
-            threading.Thread(target = router.latencia).start()
-            #multiprocessing.Process(target=router.latencia).start()
+            
+
+            origen.paquetes_enviados.append(paquete)
+
+            threading.Thread(target = origen.latencia).start()
+            
 
 
-            print(f'{paquete.mensaje}: {router.nombre}')
+            print(f'{paquete.mensaje}: {origen.nombre}')
 
             if coordenada_destino > coordenada_origen:
                 sentido_tx = 'siguiente'
             else:
                 sentido_tx = 'anterior'
 
-            router_actual = getattr(router, sentido_tx)
+            router_actual = getattr(origen, sentido_tx)
             # if coordenada_destino > coordenada_origen: #aca falta chequear si el router directamente adyacente al primero es el destino --> si esta inactivo lo baypassea
 
         
             while router_actual.estado != 'ACTIVO' and  router_actual != paquete.metadata["destino"]:
-                print(f'{time.time() - time_ref} - {router_actual.nombre} baypaseado')
+                print(f'{time.time() - time_ref} - {router_actual.nombre} bypasseado')
                 router_actual = getattr(router_actual, sentido_tx)
             
             
@@ -189,7 +199,7 @@ class Ruta:
                         contador += 1
                     
                     threading.Thread(target=router_actual.latencia).start()
-                    #multiprocessing.Process(target=router.latencia).start()
+                    
                     router_actual.retransmisiones.append(paquete)
 
                     print(f'{time.time() - time_ref} - {paquete.mensaje}: salio de {router_actual.nombre}')

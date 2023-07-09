@@ -19,18 +19,37 @@ class Router():
         self.habilitado = True
         
     def crearPaquete(self, mensaje:str, destino):
-
-        if len(self.paquetes_enviados) == 0:
-            id = 1
+        if self.estado == 'ACTIVO':
+            if len(self.paquetes_enviados) == 0:
+                id = 1
+            else:
+                id = self.paquetes_enviados[-1].metadata["id"] + 1
+            
+            hoy = datetime.now()
+            newPaquete = Paquete(mensaje, {"id": id, "fecha": hoy, "origen": self, "destino": destino} )
+            
+            return newPaquete
         else:
-            id = self.paquetes_enviados[-1].metadata["id"] + 1
+            print('No puede crear un paquete si el router no esta ACTIVO.')
+    
+    # def crearPaqueteAleatorio(self, destino):
+    #     mensajes = ['Hola, ¿Como estas?','Que lindo dia.','Me gustan los perros.','¿Tomaste agua hoy?']
+    #     mensaje = ''
+
+    #     if self.estado == 'ACTIVO':
+    #         if len(self.paquetes_enviados) == 0:
+    #             id = 1
+    #         else:
+    #             id = self.paquetes_enviados[-1].metadata["id"] + 1
+            
+    #         hoy = datetime.now()
+    #         newPaquete = Paquete(mensaje, {"id": id, "fecha": hoy, "origen": self, "destino": destino} )
+            
+    #         return newPaquete
+    #     else:
+    #         print('No puede crear un paquete si el router no esta ACTIVO.')
         
-        hoy = datetime.now()
-        newPaquete = Paquete(mensaje, {"id": id, "fecha": hoy, "origen": self, "destino": destino} )
         
-        self.paquetes_enviados.append(newPaquete)
-        
-        return newPaquete
         
     def __str__(self) -> str:
         return self.nombre
@@ -49,8 +68,8 @@ class Router():
         else:
             print('No se puede averiar un router INACTIVO o que ya este EN_RESET')
 
-# Este metodo permite ordenar los paquetes que se encuentran en la lista recepciones ya que primero
-# ordena por coordenada router de manera ascendente y luego procede a ordenar por id del paquete.
+    # Este metodo permite ordenar los paquetes que se encuentran en la lista recepciones ya que primero
+    #  ordena por coordenada router de manera ascendente y luego procede a ordenar por id del paquete.
     def ordenarPaquetes(self):
 
         self.recepciones.sort(key=lambda p: (p.metadata['origen'].nombre[-1], p.metadata['id']))
