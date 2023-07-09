@@ -99,38 +99,49 @@ class Ruta:
                 sentido_tx = 'anterior'
 
             router_actual = getattr(router, sentido_tx)
-
-            if router_actual != paquete.metadata["destino"]:
-                router_actual.retransmisiones_pendientes.agregar(paquete)
             # if coordenada_destino > coordenada_origen: #aca falta chequear si el router directamente adyacente al primero es el destino --> si esta inactivo lo baypassea
 
-            if router_actual != paquete.metadata["destino"]:
-                while router_actual.estado != 'ACTIVO':
-                    if router_actual != paquete.metadata["destino"]:
-                        print(f'{time.time() - time_ref} - {router_actual.nombre} baypaseado')
-                        router_actual = getattr(router_actual, sentido_tx)
-                    else:
-                        self.enviar_a_nube(paquete, router_actual)
-                        conta = 0
-                        while router_actual.estado != 'ACTIVO': #mandar a la nube que chequea el estado del nodo destino constantemente hasta que se habilite
-                            if conta == 0:
-                                print(f'La nube esta esperando a que se active el {router_actual.nombre}.')
-                            conta += 1
-                        c = 0
-                        while paquete != nube.paquetes_pendientes[router_actual.nombre][0]:
-                            if c == 0:
-                                print(f"Todavia no es el turno del paquete {paquete.mensaje}")
-                            c += 1
-                    
-                        router_actual.recepciones.append(paquete)
-                        
-                        nube.paquetes_pendientes[router_actual.nombre].remove(nube.paquetes_pendientes[router_actual.nombre][0])
-                        print(f'Se envio el paquete {paquete.mensaje} desde la nube al {router_actual.nombre}')
-                        
-                        inicio = False 
-                    #Lo mando a la nube
-                        return 
-                    
+        
+            while router_actual.estado != 'ACTIVO' and  router_actual != paquete.metadata["destino"]:
+                print(f'{time.time() - time_ref} - {router_actual.nombre} baypaseado')
+                router_actual = getattr(router_actual, sentido_tx)
+            
+            
+            if router_actual == paquete.metadata["destino"] and router_actual.estado != 'ACTIVO':
+                self.enviar_a_nube(paquete, router_actual)
+                conta = 0
+                while router_actual.estado != 'ACTIVO': #mandar a la nube que chequea el estado del nodo destino constantemente hasta que se habilite
+                    if conta == 0:
+                        print(f'La nube esta esperando a que se active el {router_actual.nombre}.')
+                    conta += 1
+                c = 0
+                while paquete != nube.paquetes_pendientes[router_actual.nombre][0]:
+                    if c == 0:
+                        print(f"Todavia no es el turno del paquete {paquete.mensaje}")
+                    c += 1
+            
+                router_actual.recepciones.append(paquete)
+                
+                nube.paquetes_pendientes[router_actual.nombre].remove(nube.paquetes_pendientes[router_actual.nombre][0])
+                print(f'Se envio el paquete {paquete.mensaje} desde la nube al {router_actual.nombre}')
+                #lo manda desde la nube al nodo destino
+                return
+            
+            elif router_actual == paquete.metadata["destino"]:
+                contador = 0
+                while not router_actual.habilitado:
+                    if contador == 0:
+                        print(f'{time.time() - time_ref} - Esperando a que se habilite el {router_actual.nombre}.')
+                    contador += 1
+                router_actual.recepciones.append(paquete)
+                print(f'{time.time() - time_ref} - {paquete.mensaje}: estoy en {router_actual.nombre}')
+                return
+            
+            router_actual.retransmisiones_pendientes.agregar(paquete)
+
+           
+           
+           
             # if router_actual != paquete.metadata["destino"]:
             #     bypassedFlag = False  # Variable para controlar la impresión del mensaje "bypassed"
             #     while router_actual.estado != 'ACTIVO':
@@ -157,101 +168,106 @@ class Ruta:
             #         inicio = False
             #         return
 
-            #     router_actual.retransmisiones_pendientes.agregar(paquete)
+            # router_actual.retransmisiones_pendientes.agregar(paquete)
 
 
-                while inicio:
-                    if router_actual != paquete.metadata["destino"]:
-                        #print(f'{time.time() - time_ref} - {paquete.mensaje}: estoy en {router_actual.nombre}')
 
-                        router_a_enviar = getattr(router_actual, sentido_tx)
-                    
+            
 
-                        #Considerar que retransmisiones sea un contador y no una lista --> Porque no necesitamos manipular los objetos de esa lista, sino solo contarlos para estadisticas
-                        contador = 0
-                        while not router_actual.habilitado:
-                            if contador == 0:
-                                print(f'{time.time() - time_ref} - Esperando a que se habilite el {router_actual.nombre}.')
-                            contador += 1
-                        
-                        threading.Thread(target=router_actual.latencia).start()
-                        #multiprocessing.Process(target=router.latencia).start()
-                        router_actual.retransmisiones.append(paquete)
+            while inicio:
+                if router_actual != paquete.metadata["destino"]:
+                    #print(f'{time.time() - time_ref} - {paquete.mensaje}: estoy en {router_actual.nombre}')
 
-                        print(f'{time.time() - time_ref} - {paquete.mensaje}: salio de {router_actual.nombre}')
+                    router_a_enviar = getattr(router_actual, sentido_tx)
+                
 
-                        while router_a_enviar.estado != 'ACTIVO' and router_a_enviar != paquete.metadata["destino"]:
-                            print(f'{time.time() - time_ref} - {router_a_enviar.nombre} bypasseado')
-                            router_a_enviar = getattr(router_a_enviar, sentido_tx)
-                            if router_a_enviar == paquete.metadata["destino"] and router_a_enviar.estado != 'ACTIVO':
-                                pass #mandar a la nube que chequea el estado del nodo destino constantemente hasta que se habilite
-                        router_a_enviar.retransmisiones_pendientes.agregar(paquete)
-                        router_actual.retransmisiones_pendientes.borrar()
-                        
-                        router_actual = router_a_enviar
-                        
-
-                    else:
-                        if router_actual.estado != 'ACTIVO':
-                            self.enviar_a_nube(paquete, router_actual)
-                            conta = 0
-                            while router_actual.estado != 'ACTIVO': #mandar a la nube que chequea el estado del nodo destino constantemente hasta que se habilite
-                                if conta == 0:
-                                    print(f'La nube esta esperando a que se active el {router_actual.nombre}.')
-                                conta += 1
-                            c = 0
-                            while paquete != nube.paquetes_pendientes[router_actual.nombre][0]:
-                                if c == 0:
-                                    print(f"Todavia no es el turno del paquete {paquete.mensaje}")
-                                c += 1
-
-                            router_actual.recepciones.append(paquete)
-                            
-                            if len(router_actual.recepciones) > 2:
-                                print(router_actual.recepciones[0].mensaje + router_actual.recepciones[1].mensaje + router_actual.recepciones[2].mensaje)
-                            
-                            nube.paquetes_pendientes[router_actual.nombre].remove(nube.paquetes_pendientes[router_actual.nombre][0])
-                            print(f'Se envio el paquete {paquete.mensaje} desde la nube al {router_actual.nombre}')
-                            
-                            inicio = False
-                        else:
-                            contador = 0
-                            while not router_actual.habilitado:
-                                if contador == 0:
-                                    print(f'{time.time() - time_ref} - Esperando a que se habilite el {router_actual.nombre}.')
-                                contador += 1
-                            router_actual.recepciones.append(paquete)
-                            print(f'{time.time() - time_ref} - {paquete.mensaje}: estoy en {router_actual.nombre}')
-                            
-                            #print(router_actual.nombre)
-                            inicio = False
-            else:
-                if router_actual.estado != 'ACTIVO':
-                    self.enviar_a_nube(paquete, router_actual)
-                    conta = 0
-                    while router_actual.estado != 'ACTIVO': #mandar a la nube que chequea el estado del nodo destino constantemente hasta que se habilite
-                        if conta == 0:
-                            print(f'La nube esta esperando a que se active el {router_actual.nombre}.')
-                        conta += 1
-                    c = 0
-                    while paquete != nube.paquetes_pendientes[router_actual.nombre][0]:
-                        if c == 0:
-                            print(f"Todavia no es el turno del paquete {paquete.mensaje}")
-                        c += 1
-
-                    router_actual.recepciones.append(paquete)
-
-                    nube.paquetes_pendientes[router_actual.nombre].remove(nube.paquetes_pendientes[router_actual.nombre][0])
-                    print(f'Se envio el paquete {paquete.mensaje} desde la nube al {router_actual.nombre}')
-
-                else:
+                    #Considerar que retransmisiones sea un contador y no una lista --> Porque no necesitamos manipular los objetos de esa lista, sino solo contarlos para estadisticas
                     contador = 0
                     while not router_actual.habilitado:
                         if contador == 0:
                             print(f'{time.time() - time_ref} - Esperando a que se habilite el {router_actual.nombre}.')
                         contador += 1
-                    router_actual.recepciones.append(paquete)
-                    print(f'{time.time() - time_ref} - {paquete.mensaje}: estoy en {router_actual.nombre}')
+                    
+                    threading.Thread(target=router_actual.latencia).start()
+                    #multiprocessing.Process(target=router.latencia).start()
+                    router_actual.retransmisiones.append(paquete)
+
+                    print(f'{time.time() - time_ref} - {paquete.mensaje}: salio de {router_actual.nombre}')
+
+                    while router_a_enviar.estado != 'ACTIVO' and router_a_enviar != paquete.metadata["destino"]:
+                        print(f'{time.time() - time_ref} - {router_a_enviar.nombre} bypasseado')
+                        router_a_enviar = getattr(router_a_enviar, sentido_tx)
+                        if router_a_enviar == paquete.metadata["destino"] and router_a_enviar.estado != 'ACTIVO':
+                            pass #mandar a la nube que chequea el estado del nodo destino constantemente hasta que se habilite
+                    
+                    router_a_enviar.retransmisiones_pendientes.agregar(paquete)
+                    time.sleep(random.uniform(0.05,0.09))
+                    router_actual.retransmisiones_pendientes.borrar()
+                    
+                    router_actual = router_a_enviar
+                    
+
+                else:
+                    if router_actual.estado != 'ACTIVO':
+                        self.enviar_a_nube(paquete, router_actual)
+                        conta = 0
+                        while router_actual.estado != 'ACTIVO': #mandar a la nube que chequea el estado del nodo destino constantemente hasta que se habilite
+                            if conta == 0:
+                                print(f'La nube esta esperando a que se active el {router_actual.nombre}.')
+                            conta += 1
+                        c = 0
+                        while paquete != nube.paquetes_pendientes[router_actual.nombre][0]:
+                            if c == 0:
+                                print(f"Todavia no es el turno del paquete {paquete.mensaje}")
+                            c += 1
+
+                        router_actual.recepciones.append(paquete)
+                        
+                        if len(router_actual.recepciones) > 2:
+                            print(router_actual.recepciones[0].mensaje + router_actual.recepciones[1].mensaje + router_actual.recepciones[2].mensaje)
+                        
+                        nube.paquetes_pendientes[router_actual.nombre].remove(nube.paquetes_pendientes[router_actual.nombre][0])
+                        print(f'Se envio el paquete {paquete.mensaje} desde la nube al {router_actual.nombre}')
+                        
+                        inicio = False
+                    else:
+                        contador = 0
+                        while not router_actual.habilitado:
+                            if contador == 0:
+                                print(f'{time.time() - time_ref} - Esperando a que se habilite el {router_actual.nombre}.')
+                            contador += 1
+                        router_actual.recepciones.append(paquete)
+                        print(f'{time.time() - time_ref} - {paquete.mensaje}: estoy en {router_actual.nombre}')
+                        
+                        #print(router_actual.nombre)
+                        inicio = False
+            # else:
+            #     if router_actual.estado != 'ACTIVO':
+            #         self.enviar_a_nube(paquete, router_actual)
+            #         conta = 0
+            #         while router_actual.estado != 'ACTIVO': #mandar a la nube que chequea el estado del nodo destino constantemente hasta que se habilite
+            #             if conta == 0:
+            #                 print(f'La nube esta esperando a que se active el {router_actual.nombre}.')
+            #             conta += 1
+            #         c = 0
+            #         while paquete != nube.paquetes_pendientes[router_actual.nombre][0]:
+            #             if c == 0:
+            #                 print(f"Todavia no es el turno del paquete {paquete.mensaje}")
+            #             c += 1
+
+            #         router_actual.recepciones.append(paquete)
+
+            #         nube.paquetes_pendientes[router_actual.nombre].remove(nube.paquetes_pendientes[router_actual.nombre][0])
+            #         print(f'Se envio el paquete {paquete.mensaje} desde la nube al {router_actual.nombre}')
+
+            #     else:
+            #         contador = 0
+            #         while not router_actual.habilitado:
+            #             if contador == 0:
+            #                 print(f'{time.time() - time_ref} - Esperando a que se habilite el {router_actual.nombre}.')
+            #             contador += 1
+            #         router_actual.recepciones.append(paquete)
+            #         print(f'{time.time() - time_ref} - {paquete.mensaje}: estoy en {router_actual.nombre}')
                     
                     #print(router_actual.nombre)
 

@@ -38,7 +38,7 @@ class Router():
 
     def latencia(self):
         self.habilitado = False
-        time.sleep(0.1)
+        time.sleep(5)
         self.habilitado = True
 
 

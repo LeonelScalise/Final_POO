@@ -72,21 +72,24 @@ class RoutingSim():
         p1 = router1.crearPaquete("Sali del 1.0", router5)
         p2 = router3.crearPaquete("Sali del 3", router5)
         p3 = router1.crearPaquete("Sali del 1.1", router5)
-        p4 = router4.crearPaquete("Sali del 4", router5)
+        p4 = router5.crearPaquete("Sali del 5", router1)
 
         
         #threading.Timer(5, lambda : ruta.averiaAleatoria()).start()
 
-        # threading.Timer(1, lambda : self.inhabilitarRouter(router3)).start()
-        threading.Timer(3, lambda : ruta.viajePaquete(p4, router4)).start()
-        threading.Timer(5, lambda : ruta.viajePaquete(p3, router1)).start()
-        threading.Timer(7, lambda : ruta.viajePaquete(p2, router3)).start()
-        threading.Timer(10, lambda : ruta.viajePaquete(p1, router1)).start()
+        #threading.Timer(1, lambda : self.inhabilitarRouter(router2)).start()
+        #threading.Timer(1, lambda : self.inhabilitarRouter(router3)).start()
+        #threading.Timer(1, lambda : self.inhabilitarRouter(router3)).start()
+        threading.Timer(2, lambda : ruta.viajePaquete(p4, router5)).start()
+        # threading.Timer(5, lambda : ruta.viajePaquete(p3, router1)).start()
+        # threading.Timer(7, lambda : ruta.viajePaquete(p2, router3)).start()
+        threading.Timer(2, lambda : ruta.viajePaquete(p1, router1)).start()
         
         # threading.Timer(7, lambda : ruta.viajePaquete(p1, router2)).start()
         # threading.Timer(13, lambda : ruta.viajePaquete(p3, router0)).start()
 
-        #threading.Timer(15, lambda : self.habilitarRouter(router3)).start()
+        #threading.Timer(5, lambda : self.habilitarRouter(router4)).start()
+        #threading.Timer(8, lambda : self.habilitarRouter(router2)).start()
 
 
         # threading.Timer(5, lambda : ruta.viajePaquete(p2, router4)).start()
@@ -120,7 +123,7 @@ class RoutingSim():
 
 
 # Crea una instancia de Simulacion con una duración de 30 segundos
-simulacion = RoutingSim(15)
+simulacion = RoutingSim(30)
 
 # Ejecuta la simulación
 simulacion.iniciarSimulacion()
