@@ -5,6 +5,7 @@ import datetime
 import sys
 import threading
 import random
+import time
 
 class RoutingSim():
     def __init__(self, duracion):
@@ -49,6 +50,8 @@ class RoutingSim():
 
     def iniciarSimulacion(self): 
         self.limpiarCSV()
+
+        time_ref = time.time()
         router1 = self.crearRouter(1)
         router2 = self.crearRouter(2)
         router3 = self.crearRouter(3)
@@ -62,61 +65,109 @@ class RoutingSim():
         ruta.agregarRouter(router3)
         ruta.agregarRouter(router4)
         ruta.agregarRouter(router5)
-        # ruta.iniciarLatenciaRouters()
 
-        #self.inhabilitarRouter(router1)
-        #self.inhabilitarRouter(router3)
-        #self.inhabilitarRouter(router2)
+
+    #------------------------------------------------------------------------------------------------------------------
+
+        # Este ejemplo prueba el funcionamiento de la transmision y retransmision en ambos sentidos
+
+        # p1 = router1.crearPaquete("Sali del 1", router5)
+        # p2 = router5.crearPaquete("Sali del 5", router1)
+
+        # threading.Timer(2, lambda : ruta.viajePaquete(p1, time_ref)).start()
+        # threading.Timer(4, lambda : ruta.viajePaquete(p2, time_ref)).start()        
+
+    #------------------------------------------------------------------------------------------------------------------
+
+        # Este ejemplo prueba el funcionamiento del bypass
+
+        # self.inhabilitarRouter(router2)
+        # self.inhabilitarRouter(router4)
+
+        # p1 = router1.crearPaquete("Sali del 1", router5)
+        # p2 = router5.crearPaquete("Sali del 5", router1)
+
+        # threading.Timer(2, lambda : ruta.viajePaquete(p1, time_ref)).start()
+        # threading.Timer(4, lambda : ruta.viajePaquete(p2, time_ref)).start()
+
+    #------------------------------------------------------------------------------------------------------------------
+
+        # Este ejemplo prueba el funcionamiento de avería aleatoria --> se pueden probar varios conceptos.
+
+        # p1 = router1.crearPaquete("Sali del 1", router5)
+        # p2 = router5.crearPaquete("Sali del 5", router1)
+
+        # threading.Timer(2, lambda : ruta.viajePaquete(p1, time_ref)).start()
+        # threading.Timer(4, lambda : ruta.viajePaquete(p2, time_ref)).start()
+
+        # threading.Timer(1, lambda : ruta.averiaAleatoria()).start()
+
+    #------------------------------------------------------------------------------------------------------------------
+
+        # Este ejemplo prueba el funcionamiento de la nube (cuando un router debe recibir INACTIVO)
+
+        # p1 = router1.crearPaquete("Sali del 1", router4)
 
         
+        # threading.Timer(1, lambda : self.inhabilitarRouter(router4)).start()
 
+        # threading.Timer(5, lambda : ruta.viajePaquete(p1, time_ref)).start()
 
-        p1 = router1.crearPaquete("Sali del 1.0", router3)
-        p2 = router1.crearPaquete("Sali del 1.1", router3)
-        p3 = router1.crearPaquete("Sali del 1.2", router3)
-        p4 = router2.crearPaquete("Sali del 2", router3)
+        # threading.Timer(10, lambda : self.habilitarRouter(router4)).start()
 
+    #------------------------------------------------------------------------------------------------------------------
+
+        # Este ejemplo prueba el funcionamiento de la averia durante el procesamiento de un paquete --> Consideración: se debe utilizar una latencia de 5 segundos para observarlo
         
-        #threading.Timer(5, lambda : ruta.averiaAleatoria()).start()
-
-        # threading.Timer(1, lambda : self.inhabilitarRouter(router2)).start()
-        #threading.Timer(1, lambda : self.inhabilitarRouter(router3)).start()
-        #threading.Timer(1, lambda : self.inhabilitarRouter(router3)).start()
-        threading.Timer(2, lambda : ruta.enviarPaquete(p1)).start()
-        threading.Timer(2.05, lambda : ruta.enviarPaquete(p2)).start()
-        threading.Timer(2.1, lambda : ruta.enviarPaquete(p3)).start()
-        threading.Timer(2.4, lambda : ruta.enviarPaquete(p4)).start()
+        # p1 = router1.crearPaquete("Sali del 1", router5)
+        # p2 = router2.crearPaquete("Sali del 3", router3)
         
-        # threading.Timer(7, lambda : ruta.viajePaquete(p1, router2)).start()
-        # threading.Timer(13, lambda : ruta.viajePaquete(p3, router0)).start()
 
-        #threading.Timer(5, lambda : self.habilitarRouter(router4)).start()
-        # threading.Timer(15, lambda : self.habilitarRouter(router2)).start()
+        # threading.Timer(2, lambda : ruta.viajePaquete(p2, time_ref)).start()
+        # threading.Timer(3, lambda : ruta.viajePaquete(p1, time_ref)).start()
 
-
-        # threading.Timer(5, lambda : ruta.viajePaquete(p2, router4)).start()
-        # threading.Timer(7, lambda : ruta.viajePaquete(p3, router1)).start()
-        #threading.Timer(random.uniform(5,6), lambda : ruta.averiaAleatoria()).start()
-        # threading.Timer(random.uniform(7,8), lambda : router2.averia()).start()
+        # threading.Timer(4, lambda : router2.averia()).start()
 
 
+    #------------------------------------------------------------------------------------------------------------------
+
+        # Este ejemplo prueba si dos paquetes llegan al mismo tiempo a un router (debería elegir uno y mandarlo y esperar la latencia para el otro)
+
+        # p1 = router1.crearPaquete("Sali del 1", router5)
+        # p2 = router5.crearPaquete("Sali del 5", router1)
+
+        # threading.Timer(2, lambda : ruta.viajePaquete(p1, time_ref)).start()
+        # threading.Timer(2, lambda : ruta.viajePaquete(p2, time_ref)).start()
+
+    #------------------------------------------------------------------------------------------------------------------
+         
+        # Este ejemplo prueba el funcionamiento de la prioridad entre envios de un mismo router
+
+        # p1 = router1.crearPaquete("Sali del 1.1", router5)
+        # p2 = router1.crearPaquete("Sali del 1.2", router5)
+        # p3 = router1.crearPaquete("Sali del 1.3", router5)
         
-        
-        #threading.Timer(10, lambda : self.inhabilitarRouter(router2)).start() # A los 20 segundos de arrancar la simulación se deshabilita el router0
+        # threading.Timer(2, lambda : ruta.viajePaquete(p1, time_ref)).start()
+        # threading.Timer(2.01, lambda : ruta.viajePaquete(p2, time_ref)).start()
+        # threading.Timer(2.02, lambda : ruta.viajePaquete(p3, time_ref)).start()
 
 
-        # threading.Timer(self.duracion - 0.01, ).start()
+    #------------------------------------------------------------------------------------------------------------------
+        # Este ejemplo prueba el funcionamiento de la prioridad de las retransmisiones contra los envios (a veces no funciona el print pero anda igual --> se cumple la prioridad)
         
+        # p1 = router2.crearPaquete("Sali del 2.1", router3)
+        # p2 = router2.crearPaquete("Sali del 2.2", router3)
+        # p3 = router1.crearPaquete("Sali del 1", router3)
+
+        # threading.Timer(2, lambda : ruta.viajePaquete(p1, time_ref)).start()
+        # threading.Timer(2.01, lambda : ruta.viajePaquete(p3, time_ref)).start()
+        # threading.Timer(2.06, lambda : ruta.viajePaquete(p2, time_ref)).start()
+        
+
+    #------------------------------------------------------------------------------------------------------------------
 
         self.timer = threading.Timer(self.duracion, lambda: self.terminarSimulacion(ruta)) # Cuando pasan "duración" segundos se ejecuta terminarSimulacion 
         self.timer.start()
-        
-        
-
-        # Realizar acá las operaciones de simulación (creacion de routers, creacion de paquetes, transmision de paquetes (armado de Ruta), etc.)
-
-        # Todas las operaciones creemos que se deberían hacer en función de "duracion" ejemplo: threading.Timer(self.duracion * 0.1, self.crearRouter)
-
         
         # Esperar hasta que la simulación esté completa
         while not self.sim_terminada:
@@ -126,46 +177,10 @@ class RoutingSim():
         sys.exit()
 
 
-# Crea una instancia de Simulacion con una duración de 30 segundos
-simulacion = RoutingSim(400)
+# Crea una instancia de Simulacion con una duración de 20 segundos
+simulacion = RoutingSim(20)
 
 # Ejecuta la simulación
 simulacion.iniciarSimulacion()
-
-# if __name__ == '__main__':
-
-    # rutita = Ruta()
-    # r0=RoutingSim.crearRouter(0)
-    # r1=RoutingSim.crearRouter(1)
-    # r2=RoutingSim.crearRouter(2)
-    # r3=RoutingSim.crearRouter(3)
-    # r4=RoutingSim.crearRouter(4)
-
-    # rutita.agregarRouter(r0)
-    # rutita.agregarRouter(r1)
-    # rutita.agregarRouter(r2)
-    # rutita.agregarRouter(r3)
-    # rutita.agregarRouter(r4)
-
-    # p1 = Paquete('Leo sos un capo', {"id":1, "fecha":"fecha inventada", "origen":r4, "destino":r1} )
-    # p2 = Paquete('Leo sos un capo', {"id":2, "fecha":"fecha inventada", "origen":r2, "destino":r1} )
-
-    # p1 = r1.crearPaquete("Hola crack", r4)
-    # p2 = r4.crearPaquete("Hola crack 2", r2)
-
-    # rutita.viajePaquete(p1, r1)
-    # rutita.viajePaquete(p2, r4)
-    
-    # rutita.crearPaqueteAleatorio(r0)
-    # rutita.crearPaqueteAleatorio(r3)
-    # rutita.crearPaqueteAleatorio(r0)
-    # rutita.crearPaqueteAleatorio(r3)
-    
-
-    # print(r2.retransmisiones_pendientes.verCola)
-    # print(r3.retransmisiones_pendientes.verCola)
-    # print(r4.retransmisiones_pendientes.verCola)
-    # print(r4.recepciones[-1].metadata)
-    # print(r2.recepciones[-1].metadata)
 
     

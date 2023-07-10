@@ -1,4 +1,5 @@
 from clasePaquete import Paquete
+
 class Nodo():
     def __init__(self, valor):
         self.valor = valor
@@ -37,12 +38,3 @@ class Cola():
                 print(actual.valor.mensaje)
                 actual = actual.siguiente
 
-if __name__ == '__main__':
-    c=Cola()
-    p1=Paquete('caca','a')
-    p2=Paquete('pis','b')
-    c.agregar(p1)
-    c.agregar(p2)
-    c.borrar()
-    c.borrar()
-    print(c.esVacia())
