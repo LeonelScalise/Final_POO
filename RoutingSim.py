@@ -30,11 +30,12 @@ class RoutingSim():
         router.registrarEvento()
 
     def terminarSimulacion(self, ruta):
+        
         for router in ruta.routers:
             router.ordenarPaquetes()
         
-        ruta.tasas()
         ruta.crearArchivos()
+        ruta.tasas()
 
         self.sim_terminada = True
 

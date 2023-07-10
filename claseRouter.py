@@ -16,18 +16,18 @@ class Router():
         self.siguiente = None
         self.anterior = None
         self.paquetes_enviados = [] # Considerar que paquetes_enviados sea un contador y no una lista
+        self.paquetes_creados = 0
         self.habilitado = True
         
     def crearPaquete(self, mensaje:str, destino):
+        self.paquetes_creados += 1
+        id = self.paquetes_creados
+        
         if self.estado == 'ACTIVO':
-            if len(self.paquetes_enviados) == 0:
-                id = 1
-            else:
-                id = self.paquetes_enviados[-1].metadata["id"] + 1
-            
+
             hoy = datetime.now()
             newPaquete = Paquete(mensaje, {"id": id, "fecha": hoy, "origen": self, "destino": destino} )
-            
+
             return newPaquete
         else:
             print('No puede crear un paquete si el router no esta ACTIVO.')
@@ -85,9 +85,9 @@ class Router():
 
 if __name__=='__main__':
 
-    r1=Router('ruter1','Activo')
-    r2=Router('ruter2','Activo')
-    r3=Router('ruter3','Activo')
+    r1=Router('ruter1')
+    r2=Router('ruter2')
+    r3=Router('ruter3')
 
     p1=Paquete('caca',{"id": 1, "fecha": None, "origen": r3, "destino": r1})
     p2=Paquete('de mi culo',{"id": 2, "fecha": None, "origen": r3, "destino": r1})
