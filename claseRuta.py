@@ -51,7 +51,7 @@ class Ruta:
                     print(f'Oh no!, en la espera de prioridad de envios pendientes para enviar el paquete {paquete.mensaje} el {origen.nombre} se averio, el paquete se ha perdido :c')
                     return
                 elif contaflag == 0:
-                    print(f'Espera tu turno pa {paquete.mensaje}')
+                    print(f'El paquete {paquete.mensaje} debe esperar su turno, todavia hay envios pendientes')
                 contaflag +=1
 
             
@@ -65,7 +65,7 @@ class Ruta:
                     print(f'{round(time.time() - timeRef, 2)} - Esperando a que se habilite el {origen.nombre} de origen.')
                     c1 += 1
                 elif not origen.retransmisiones_pendientes == [] and c2 == 0:
-                    print(f'UPSI DUPSI HAY TRANSMISIONES PENDIENTES PA EN EL {origen.nombre}')
+                    print(f'El {origen.nombre} tiene retransmisiones pendientes, no puede enviar un paquete propio todavía.')
                     c2 += 1
                 time.sleep(0.05)
 
@@ -97,7 +97,7 @@ class Ruta:
                 c = 0
                 while paquete != nube.paquetes_pendientes[router_actual.nombre][0]:
                     if c == 0:
-                        print(f"Todavia no es el turno del paquete {paquete.mensaje}")
+                        print(f"Todavia no es el turno del paquete {paquete.mensaje} de volver de la nube.")
                     c += 1
             
                 router_actual.recepciones.append(paquete)
@@ -200,7 +200,7 @@ class Ruta:
         except Exception as e:
              print(e)
     
-
+# Este metodo permite crear un a averia aleatoria
     def averiaAleatoria(self):
         pos_aleatoria = random.randint(0,len(self.routers)-1)
         router = self.routers[pos_aleatoria]
@@ -221,7 +221,7 @@ class Ruta:
         print(router.nombre)
         print(router.estado)
 
-
+# Este metodo envia a la nube un paquete de un determinado router, si el router no tenia un espacio para sus propios paquetes, lo crea, si ya lo tenia, solo agrega el paquete al espacio preexistente de nube propio del router en cuestion 
     def enviar_a_nube(self, paquete, router):
        if router.nombre not in nube.paquetes_pendientes: 
             nube.paquetes_pendientes[router.nombre] = []
@@ -229,7 +229,7 @@ class Ruta:
        nube.paquetes_pendientes[router.nombre].append(paquete)
     
 
-    # Este metodo permite crear archivos .txt de cada router, en los cuales se puede observar los paquetes ordenados por cada router emisorl
+    # Este metodo permite crear archivos .txt de cada router, en los cuales se puede observar los paquetes ordenados por cada router emisor
     def crearArchivos(self):
         for router in self.routers:
             if len(router.recepciones) != 0:

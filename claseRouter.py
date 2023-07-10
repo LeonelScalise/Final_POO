@@ -2,6 +2,7 @@ from clasePaquete import Paquete
 from datetime import datetime
 import time
 import csv
+import random
 
 class Router():
     def __init__(self, nombre):
@@ -17,7 +18,7 @@ class Router():
         self.paquetes_creados = 0
         self.habilitado = True
         
-
+# Este metodo permite que el router pueda crear un paquete
     def crearPaquete(self, mensaje:str, destino):
         self.paquetes_creados += 1
         id = self.paquetes_creados
@@ -35,27 +36,42 @@ class Router():
     def __str__(self) -> str:
         return self.nombre
     
-
+# Este metodo permite definir la latencia de los routers
     def latencia(self):
         self.habilitado = False
         time.sleep(0.1)
         self.habilitado = True
 
 
+#Este metodo permite crear una averia en un router
     def averia(self):
         if self.estado == 'ACTIVO':
+            print(self.nombre)
+            print(self.estado)
             self.estado = "EN_RESET"
+            print(self.nombre)
+            print(self.estado)
+            self.registrarEvento()
+
+            tiempo_aleatorio = random.randint(5, 10)
+            time.sleep(tiempo_aleatorio)
+            self.estado = "ACTIVO"
+            print(self.nombre)
+            print(self.estado)
             self.registrarEvento()
         else:
             print('No se puede averiar un router INACTIVO o que ya este EN_RESET')
+        
+        
 
-    # Este metodo permite ordenar los paquetes que se encuentran en la lista recepciones ya que primero
-    # Ordena por coordenada router de manera ascendente y luego procede a ordenar por id del paquete.
+# Este metodo permite ordenar los paquetes que se encuentran en la lista recepciones ya que primero
+# Ordena por coordenada router de manera ascendente y luego procede a ordenar por id del paquete.
     def ordenarPaquetes(self):
 
         self.recepciones.sort(key=lambda p: (p.metadata['origen'].nombre[-1], p.metadata['id']))
-    
 
+
+#Este metodo permite registrar los eventos del estado de los routers en el archivo csv
     def registrarEvento(self):
         fecha_hora= datetime.now().strftime("%d-%m-%y %H:%M:%S")
 
