@@ -4,6 +4,7 @@ from clasePaquete import Paquete
 import datetime
 import sys
 import threading
+import random
 
 class RoutingSim():
     def __init__(self, duracion):
@@ -73,29 +74,31 @@ class RoutingSim():
         p1 = router1.crearPaquete("Sali del 1.0", router3)
         p2 = router1.crearPaquete("Sali del 1.1", router3)
         p3 = router1.crearPaquete("Sali del 1.2", router3)
-        p4 = router2.crearPaquete("Sali del 2", router5)
+        p4 = router2.crearPaquete("Sali del 2", router3)
 
         
         #threading.Timer(5, lambda : ruta.averiaAleatoria()).start()
 
-        #threading.Timer(1, lambda : self.inhabilitarRouter(router2)).start()
+        # threading.Timer(1, lambda : self.inhabilitarRouter(router2)).start()
         #threading.Timer(1, lambda : self.inhabilitarRouter(router3)).start()
         #threading.Timer(1, lambda : self.inhabilitarRouter(router3)).start()
         threading.Timer(2, lambda : ruta.enviarPaquete(p1)).start()
         threading.Timer(2.05, lambda : ruta.enviarPaquete(p2)).start()
         threading.Timer(2.1, lambda : ruta.enviarPaquete(p3)).start()
-        threading.Timer(2.1, lambda : ruta.enviarPaquete(p4)).start()
+        threading.Timer(2.4, lambda : ruta.enviarPaquete(p4)).start()
         
         # threading.Timer(7, lambda : ruta.viajePaquete(p1, router2)).start()
         # threading.Timer(13, lambda : ruta.viajePaquete(p3, router0)).start()
 
         #threading.Timer(5, lambda : self.habilitarRouter(router4)).start()
-        #threading.Timer(8, lambda : self.habilitarRouter(router2)).start()
+        # threading.Timer(15, lambda : self.habilitarRouter(router2)).start()
 
 
         # threading.Timer(5, lambda : ruta.viajePaquete(p2, router4)).start()
         # threading.Timer(7, lambda : ruta.viajePaquete(p3, router1)).start()
-        # threading.Timer(3, lambda : ruta.averiaAleatoria()).start()
+        #threading.Timer(random.uniform(5,6), lambda : ruta.averiaAleatoria()).start()
+        # threading.Timer(random.uniform(7,8), lambda : router2.averia()).start()
+
 
         
         
@@ -124,7 +127,7 @@ class RoutingSim():
 
 
 # Crea una instancia de Simulacion con una duración de 30 segundos
-simulacion = RoutingSim(30)
+simulacion = RoutingSim(400)
 
 # Ejecuta la simulación
 simulacion.iniciarSimulacion()

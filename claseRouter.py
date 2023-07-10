@@ -5,20 +5,24 @@ import threading
 import time
 import random
 import csv
+import heapq
+from queue import PriorityQueue
 
 class Router():
     def __init__(self, nombre):
         self.nombre = nombre
         self.estado = 'AGREGADO'
-        self.retransmisiones_pendientes = Cola()
+        self.retransmisiones_pendientes = []
         self.retransmisiones = [] # Considerar que restransmiciones sea un contador y no una lista
         self.recepciones = []
         self.siguiente = None
         self.anterior = None
+        self.envios_pendientes = []
         self.paquetes_enviados = [] # Considerar que paquetes_enviados sea un contador y no una lista
         self.paquetes_creados = 0
         self.habilitado = True
         
+
     def crearPaquete(self, mensaje:str, destino):
         self.paquetes_creados += 1
         id = self.paquetes_creados
@@ -27,7 +31,7 @@ class Router():
 
             hoy = datetime.now()
             newPaquete = Paquete(mensaje, {"id": id, "fecha": hoy, "origen": self, "destino": destino} )
-
+            self.envios_pendientes.append(newPaquete)
             return newPaquete
         else:
             print('No puede crear un paquete si el router no esta ACTIVO.')
@@ -63,7 +67,7 @@ class Router():
 
     def averia(self):
         if self.estado == 'ACTIVO':
-            self.estado == "EN_RESET"
+            self.estado = "EN_RESET"
             self.registrarEvento()
         else:
             print('No se puede averiar un router INACTIVO o que ya este EN_RESET')
@@ -89,25 +93,34 @@ if __name__=='__main__':
     r2=Router('ruter2')
     r3=Router('ruter3')
 
-    p1=Paquete('caca',{"id": 1, "fecha": None, "origen": r3, "destino": r1})
-    p2=Paquete('de mi culo',{"id": 2, "fecha": None, "origen": r3, "destino": r1})
-    p3=Paquete('sale mas linda',{"id": 3, "fecha": None, "origen": r3, "destino": r1})
-    p4=Paquete('estoy con diarrea',{"id": 1, "fecha": None, "origen": r2, "destino": r1})
-    p5=Paquete('tengo que comer',{"id": 2, "fecha": None, "origen": r2, "destino": r1})
-    p6=Paquete('arroz',{"id": 3, "fecha": None, "origen": r2, "destino": r1})
-    p7=Paquete('con pollo',{"id": 4, "fecha": None, "origen": r3, "destino": r1})
+    p1=Paquete('caca',{"id": 1, "fecha": None, "origen": r3, "destino": r1}, 1)
+    p2=Paquete('de mi culo',{"id": 2, "fecha": None, "origen": r3, "destino": r1},1)
+    p3=Paquete('sale mas linda',{"id": 3, "fecha": None, "origen": r3, "destino": r1},3)
+    # p4=Paquete('estoy con diarrea',{"id": 1, "fecha": None, "origen": r2, "destino": r1})
+    # p5=Paquete('tengo que comer',{"id": 2, "fecha": None, "origen": r2, "destino": r1})
+    # p6=Paquete('arroz',{"id": 3, "fecha": None, "origen": r2, "destino": r1})
+    # p7=Paquete('con pollo',{"id": 4, "fecha": None, "origen": r3, "destino": r1})
 
     r1.recepciones.append(p2)
     r1.recepciones.append(p1)
-    r1.recepciones.append(p5)
-    r1.recepciones.append(p6)
-    r1.recepciones.append(p3)
-    r1.recepciones.append(p7)
-    r1.recepciones.append(p4)
+    # r1.recepciones.append(p5)
+    # r1.recepciones.append(p6)
+    # r1.recepciones.append(p3)
+    # r1.recepciones.append(p7)
+    # r1.recepciones.append(p4)
 
-    r1.ordenarPaquetes()
-    for paquete in r1.recepciones:
-        print(paquete.mensaje,paquete.metadata['origen'].nombre)
+    # r1.ordenarPaquetes()
+    # for paquete in r1.recepciones:
+    #     print(paquete.mensaje,paquete.metadata['origen'].nombre)
+
+    r2.agregar_retransmision_pendiente(p3)
+    r2.agregar_retransmision_pendiente(p1)
+    r2.agregar_retransmision_pendiente(p2)
+    # p1.prioridad = 4
+    print(r2.obtener_siguiente_retransmision())
+    print((r2.retransmisiones_pendientes))
+    
+
 
 
     
