@@ -69,7 +69,7 @@ class Ruta:
                     c2 += 1
                 time.sleep(0.05)
 
-            threading.Thread(target = origen.latencia).start()
+            threading.Thread(target = origen.latencia, daemon = True).start()
             origen.envios_pendientes.remove(paquete)
             origen.paquetes_enviados.append(paquete)
             print(f'{round(time.time() - timeRef, 2)} - {paquete.mensaje}: {origen.nombre}')
@@ -146,7 +146,7 @@ class Ruta:
                         elif contador == 0:
                             print(f'{round(time.time() - timeRef, 2)} - Esperando a que se habilite el {router_actual.nombre}.')
                         contador += 1
-                    threading.Thread(target=router_actual.latencia).start()
+                    threading.Thread(target = router_actual.latencia, daemon = True).start()
                     router_actual.retransmisiones.append(paquete)
                     print(f'{round(time.time() - timeRef, 2)} - {paquete.mensaje}: salio de {router_actual.nombre}')
 
@@ -248,7 +248,6 @@ class Ruta:
                         archivo.write(f"{mensaje}\n")
                         origen_anterior = origen
 
-    
     #Este metodo permite observar un grafico de barras donde se encuentran la cantidad de paquetes enviados y recibidos de cada router
     def graficoBarras(self):
         enviados = [len(router.paquetes_enviados) for router in self.routers]
@@ -265,7 +264,9 @@ class Ruta:
 
         plt.legend()
 
+
         plt.show()
+
 
     
     #Este metodo permite visualizar por terminal las tasas de retransmisiones y recepciones de paquetes

@@ -1,10 +1,7 @@
 from claseRouter import Router
 from claseRuta import Ruta
-from clasePaquete import Paquete
-import datetime
 import sys
 import threading
-import random
 import time
 
 class RoutingSim():
@@ -175,6 +172,7 @@ class RoutingSim():
 
         ruta.graficoBarras() # Esta función se ejecuta aca porque hay problemas con matplotlib y los Threads
         sys.exit()
+        
 
 
 # Crea una instancia de Simulacion con una duración de 20 segundos

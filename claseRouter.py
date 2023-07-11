@@ -39,7 +39,7 @@ class Router():
 # Este metodo permite definir la latencia de los routers
     def latencia(self):
         self.habilitado = False
-        time.sleep(0.1)
+        time.sleep(5)
         self.habilitado = True
 
 
