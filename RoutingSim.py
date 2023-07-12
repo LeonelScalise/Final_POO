@@ -164,6 +164,7 @@ class RoutingSim():
 
 
     #------------------------------------------------------------------------------------------------------------------
+
         # Este ejemplo prueba el funcionamiento de la prioridad de las retransmisiones contra los envios (a veces no funciona el print pero anda igual --> se cumple la prioridad)
         
         # p1 = router2.crearPaquete("Sali del 2.1", router3)
@@ -174,7 +175,6 @@ class RoutingSim():
         # threading.Timer(2.01, lambda : ruta.viajePaquete(p3, time_ref)).start()
         # threading.Timer(2.06, lambda : ruta.viajePaquete(p2, time_ref)).start()
         
-
     #------------------------------------------------------------------------------------------------------------------
 
         self.timer = threading.Timer(self.duracion, lambda: self.terminarSimulacion(ruta)) # Cuando pasan "duración" segundos se ejecuta terminarSimulacion 

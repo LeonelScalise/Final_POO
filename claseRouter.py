@@ -42,7 +42,6 @@ class Router():
         time.sleep(0.1) # --> Latencia
         self.habilitado = True
 
-
 # Este metodo permite crear una averia en un router
     def averia(self, timeRef):
         if self.estado == 'ACTIVO':
