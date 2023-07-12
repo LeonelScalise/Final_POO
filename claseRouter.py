@@ -42,27 +42,21 @@ class Router():
         time.sleep(0.1)
         self.habilitado = True
 
-
-#Este metodo permite crear una averia en un router
-    def averia(self):
+   
+# Este metodo permite crear una averia en un router
+    def averia(self, timeRef):
         if self.estado == 'ACTIVO':
-            print(self.nombre)
-            print(self.estado)
             self.estado = "EN_RESET"
-            print(self.nombre)
-            print(self.estado)
             self.registrarEvento()
 
             tiempo_aleatorio = random.randint(5, 10)
+            print(f'{round(time.time() - timeRef, 2)} - {self.nombre} reiniciando...')
             time.sleep(tiempo_aleatorio)
             self.estado = "ACTIVO"
-            print(self.nombre)
-            print(self.estado)
             self.registrarEvento()
+            print(f'{round(time.time() - timeRef, 2)} - {self.nombre} ACTIVO.')
         else:
-            print('No se puede averiar un router INACTIVO o que ya este EN_RESET')
-        
-        
+            print('No se puede averiar un router INACTIVO o que ya este EN_RESET.')   
 
 # Este metodo permite ordenar los paquetes que se encuentran en la lista recepciones ya que primero
 # Ordena por coordenada router de manera ascendente y luego procede a ordenar por id del paquete.

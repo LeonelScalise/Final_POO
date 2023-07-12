@@ -79,6 +79,19 @@ class RoutingSim():
 
     #------------------------------------------------------------------------------------------------------------------
 
+      # Este ejemplo prueba el funcionamiento del bypass con destino inactivo
+
+        # self.inhabilitarRouter(router3)
+        # self.inhabilitarRouter(router4)
+        # self.inhabilitarRouter(router5)
+
+        # p1 = router1.crearPaquete("Sali del 1", router5)
+
+        # threading.Timer(2, lambda : ruta.viajePaquete(p1, time_ref)).start()
+
+        # threading.Timer(4, lambda : self.habilitarRouter(router5)).start()
+    #------------------------------------------------------------------------------------------------------------------
+
         # Este ejemplo prueba el funcionamiento del bypass
 
         # self.inhabilitarRouter(router2)
@@ -100,7 +113,7 @@ class RoutingSim():
         # threading.Timer(2, lambda : ruta.viajePaquete(p1, time_ref)).start()
         # threading.Timer(4, lambda : ruta.viajePaquete(p2, time_ref)).start()
 
-        # threading.Timer(1, lambda : ruta.averiaAleatoria()).start()
+        # threading.Timer(1, lambda : ruta.averiaAleatoria(time_ref)).start()
 
     #------------------------------------------------------------------------------------------------------------------
 
@@ -126,7 +139,7 @@ class RoutingSim():
         # threading.Timer(2, lambda : ruta.viajePaquete(p2, time_ref)).start()
         # threading.Timer(3, lambda : ruta.viajePaquete(p1, time_ref)).start()
 
-        # threading.Timer(4, lambda : router2.averia()).start()
+        # threading.Timer(4, lambda : router2.averia(time_ref)).start()
 
 
     #------------------------------------------------------------------------------------------------------------------

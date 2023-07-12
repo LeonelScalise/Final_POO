@@ -200,26 +200,29 @@ class Ruta:
         except Exception as e:
              print(e)
     
+
 # Este metodo permite crear un a averia aleatoria
-    def averiaAleatoria(self):
+    def averiaAleatoria(self, timeRef):
         pos_aleatoria = random.randint(0,len(self.routers)-1)
-        router = self.routers[pos_aleatoria]
-        print(router.nombre)
-        print(router.estado)
-        router.estado = "EN_RESET"
-        router.registrarEvento()
-        print(router.nombre)
-        print(router.estado)
+        inicio = True
+        while inicio:
+            router_a_averiar = self.routers[pos_aleatoria]
+            if router_a_averiar.estado == 'ACTIVO':
+                inicio = False
+            else:
+                continue
+                
+        router_a_averiar.estado = "EN_RESET"
+        router_a_averiar.registrarEvento()
+        
         tiempo_aleatorio = random.randint(5, 10)
 
-        print(tiempo_aleatorio)
-
+        print(f'{round(time.time() - timeRef, 2)} - {router_a_averiar.nombre} reiniciando...')
         time.sleep(tiempo_aleatorio)
 
-        router.estado = "ACTIVO"
-        router.registrarEvento()
-        print(router.nombre)
-        print(router.estado)
+        router_a_averiar.estado = "ACTIVO"
+        router_a_averiar.registrarEvento()
+        print(f'{round(time.time() - timeRef, 2)} - {router_a_averiar.nombre} ACTIVO.')
 
 # Este metodo envia a la nube un paquete de un determinado router, si el router no tenia un espacio para sus propios paquetes, lo crea, si ya lo tenia, solo agrega el paquete al espacio preexistente de nube propio del router en cuestion 
     def enviar_a_nube(self, paquete, router):
