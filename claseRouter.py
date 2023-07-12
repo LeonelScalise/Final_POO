@@ -39,28 +39,24 @@ class Router():
 # Este metodo permite definir la latencia de los routers
     def latencia(self):
         self.habilitado = False
-        time.sleep(5)
+        time.sleep(0.1) # --> Latencia
         self.habilitado = True
 
 
-#Este metodo permite crear una averia en un router
-    def averia(self):
+# Este metodo permite crear una averia en un router
+    def averia(self, timeRef):
         if self.estado == 'ACTIVO':
-            print(self.nombre)
-            print(self.estado)
             self.estado = "EN_RESET"
-            print(self.nombre)
-            print(self.estado)
             self.registrarEvento()
 
             tiempo_aleatorio = random.randint(5, 10)
+            print(f'{round(time.time() - timeRef, 2)} - {self.nombre} reiniciando...')
             time.sleep(tiempo_aleatorio)
             self.estado = "ACTIVO"
-            print(self.nombre)
-            print(self.estado)
             self.registrarEvento()
+            print(f'{round(time.time() - timeRef, 2)} - {self.nombre} ACTIVO.')
         else:
-            print('No se puede averiar un router INACTIVO o que ya este EN_RESET')
+            print('No se puede averiar un router INACTIVO o que ya este EN_RESET.')
         
         
 
@@ -68,7 +64,7 @@ class Router():
 # Ordena por coordenada router de manera ascendente y luego procede a ordenar por id del paquete.
     def ordenarPaquetes(self):
 
-        self.recepciones.sort(key=lambda p: (p.metadata['origen'].nombre[-1], p.metadata['id']))
+        self.recepciones.sort(key = lambda p: (p.metadata['origen'].nombre[-1], p.metadata['id']))
 
 
 #Este metodo permite registrar los eventos del estado de los routers en el archivo csv

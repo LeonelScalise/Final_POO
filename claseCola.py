@@ -1,3 +1,5 @@
+# Esta Lista enlazada como Cola no la pudimos utilizar porque no logramos hacer andar la lógica del programa, en su reemplazo usamos listas secuenciales.
+
 class Nodo():
     def __init__(self, valor):
         self.valor = valor
